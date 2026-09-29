@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Princesa Izabel Sneaker Lab | Projetos Escolares</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f3ff',
+                            500: '#ff5500', // Sneaker Orange accent
+                            600: '#e04800',
+                            900: '#0f172a',
+                            neon: '#00ffcc',
+                            purple: '#6366f1'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Impact', 'Trebuchet MS', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+
+        /* Glassmorphism effects */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-nav {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .neon-glow-orange {
+            box-shadow: 0 0 20px rgba(255, 85, 0, 0.35);
+        }
+
+        .neon-glow-cyan {
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.25);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff5500;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-40 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo Brand -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchClassFilter('ALL')">
+                <div class="w-11 h-11 bg-gradient-to-tr from-brand-500 to-brand-purple rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg neon-glow-orange transform -rotate-3 hover:rotate-0 transition-transform">
+                    <i class="fa-solid font-bold fa-shoe-prints"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight uppercase text-white flex items-center gap-2">
+                        IZABEL <span class="text-brand-500">SNEAKER</span> LAB
+                    </h1>
+                    <p class="text-[10px] tracking-widest text-gray-400 uppercase font-semibold">C.E. Cívico-Militar Princesa Izabel</p>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="hidden md:flex flex-1 max-w-md mx-8 relative">
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Buscar modelo, aluno ou tag..." 
+                       class="w-full bg-slate-900/80 border border-slate-700/80 rounded-full py-2.5 pl-11 pr-4 text-sm text-gray-200 placeholder-gray-400 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
+            </div>
+
+            <!-- User Auth Profile Status -->
+            <div class="flex items-center space-x-3">
+                <div id="userInfoDisplay" class="hidden text-right">
+                    <p id="userNameText" class="text-xs font-bold text-gray-200"></p>
+                    <div class="flex items-center justify-end gap-1.5">
+                        <span id="userBadgeRole" class="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase"></span>
+                        <span id="userClassBadge" class="text-[10px] font-bold bg-slate-800 text-gray-300 px-2 py-0.5 rounded-full"></span>
+                    </div>
+                </div>
+
+                <button id="authBtn" onclick="openLoginModal()" 
+                        class="bg-brand-500 hover:bg-brand-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all flex items-center gap-2 shadow-md">
+                    <i class="fa-solid fa-user"></i>
+                    <span id="authBtnText">Entrar (@escola)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar Bar -->
+        <div class="px-4 pb-3 md:hidden">
+            <div class="relative w-full">
+                <input type="text" id="searchInputMobile" oninput="handleSearchMobile()" placeholder="Buscar projetos..." 
+                       class="w-full bg-slate-900 border border-slate-700 rounded-full py-2 pl-10 pr-4 text-sm text-gray-200 placeholder-gray-400 focus:outline-none focus:border-brand-500">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative overflow-hidden pt-8 pb-12 bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800/80">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ff5500_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-500 text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-graduation-cap"></i> Feira de Inovação e Design Esportivo
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white uppercase leading-none">
+                        O Futuro nos <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-500 via-amber-400 to-brand-neon">Seus Pés</span>
+                    </h1>
+                    <p class="text-gray-300 text-base sm:text-lg max-w-2xl font-light leading-relaxed">
+                        Vitrine virtual de protótipos de tênis criados pelos alunos do Colégio Cívico Militar Princesa Izabel. Tecnologia, sustentabilidade, conceitos urbanos e marketing em exposição oficial!
+                    </p>
+
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+                        <button onclick="openNewProjectModal()" id="heroAddBtn" class="bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-600 hover:to-orange-700 text-white font-extrabold px-6 py-3.5 rounded-2xl shadow-lg neon-glow-orange transition-all flex items-center gap-3 text-sm">
+                            <i class="fa-solid fa-plus text-base"></i> Submeter Projeto de Tênis
+                        </button>
+                        <a href="#projectsSection" class="bg-slate-800 hover:bg-slate-700 text-gray-200 font-bold px-6 py-3.5 rounded-2xl border border-slate-700 transition-all text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-fire text-amber-500"></i> Explorar Coleção
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Featured Hero Card Showcase -->
+                <div class="lg:col-span-5 relative">
+                    <div class="glass-card p-6 rounded-3xl relative overflow-hidden group border border-slate-700/60 shadow-2xl">
+                        <div class="absolute top-4 right-4 z-10 bg-brand-500 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full tracking-wider shadow">
+                            Em Destaque
+                        </div>
+                        <div class="relative h-64 sm:h-72 w-full flex items-center justify-center my-2">
+                            <img id="heroShoeImg" src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=800&q=80" 
+                                 alt="Hero Sneaker" class="max-h-full object-contain filter drop-shadow-[0_20px_20px_rgba(0,0,0,0.8)] transform group-hover:scale-105 group-hover:-rotate-3 transition-all duration-500">
+                        </div>
+                        <div class="space-y-2 mt-2">
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <span class="text-xs text-brand-neon font-bold uppercase tracking-wider">Cyber Izabel 2026</span>
+                                    <h3 class="text-xl font-black text-white">Air Monarch Princesa X</h3>
+                                </div>
+                                <span class="text-lg font-black text-amber-400">R$ 599,90</span>
+                            </div>
+                            <p class="text-xs text-gray-400 line-clamp-2">Solado de amortecimento bio-mecânico reutilizável com filamento impresso em 3D.</p>
+                            <div class="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-gray-400">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-user-graduate text-brand-500"></i> Turma 2°A</span>
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-400"></i> Nota 10.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT & CLASS FILTERS -->
+    <main id="projectsSection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+        
+        <!-- Filter Controls -->
+        <div class="space-y-4 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-stacked text-brand-500"></i> Turmas & Coleções
+                    </h2>
+                    <p class="text-xs text-gray-400">Selecione a turma para filtrar as criações dos alunos</p>
+                </div>
+
+                <!-- Teacher Quick Action Toggle -->
+                <div id="teacherViewControls" class="hidden flex items-center gap-2 bg-slate-900 border border-amber-500/40 p-1.5 rounded-xl">
+                    <span class="text-xs text-amber-400 font-bold px-2"><i class="fa-solid fa-user-shield"></i> Painel Professor:</span>
+                    <button onclick="togglePendingFilter()" id="btnPendingFilter" class="text-xs bg-slate-800 hover:bg-slate-700 text-gray-300 font-semibold px-3 py-1.5 rounded-lg transition-all">
+                        Pendentes de Nota
+                    </button>
+                </div>
+            </div>
+
+            <!-- Class Buttons Filter Scroll -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-none" id="classFilterContainer">
+                <!-- Class filter buttons injected dynamically -->
+            </div>
+        </div>
+
+        <!-- Project Grid -->
+        <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dynamic Cards load here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden py-16 text-center space-y-4 glass-card rounded-3xl my-8">
+            <div class="w-20 h-20 bg-slate-800 text-gray-500 rounded-full flex items-center justify-center mx-auto text-3xl">
+                <i class="fa-solid fa-shoe-prints"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-200">Nenhum modelo de tênis encontrado</h3>
+            <p class="text-sm text-gray-400 max-w-md mx-auto">Não encontramos nenhum projeto para a turma ou termo pesquisado. Seja o primeiro aluno a submeter um design!</p>
+            <button onclick="openNewProjectModal()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all inline-flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> Cadastrar Novo Tênis
+            </button>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 py-8 mt-12 text-gray-400 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-200">Colégio Estadual Cívico Militar Princesa Izabel</p>
+                    <p class="text-gray-500">Secretaria de Estado da Educação do Paraná (SEED-PR)</p>
+                </div>
+            </div>
+            <p class="text-center md:text-right text-gray-500">
+                Plataforma de Projetos de Design & Marketing - Sneaker Culture &bull; 2026
+            </p>
+        </div>
+    </footer>
+
+    <!-- MODAL: LOGIN / SIMULATION -->
+    <div id="loginModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 relative border border-slate-700 shadow-2xl animate-fade-in">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-brand-500/20 text-brand-500 rounded-2xl border border-brand-500/30 flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <h3 class="text-xl font-extrabold text-white">Acesso Institucional</h3>
+                <p class="text-xs text-gray-400 mt-1">Utilize seu e-mail do Estado do Paraná <span class="text-brand-500 font-mono font-bold">@escola.pr.gov.br</span></p>
+            </div>
+
+            <!-- Pre-defined Quick Test Accounts -->
+            <div class="mb-5 bg-slate-900/90 p-3 rounded-2xl border border-slate-800">
+                <p class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+                    <i class="fa-solid fa-bolt"></i> Modos de Teste Rápido:
+                </p>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button onclick="fillDemoUser('aluno')" class="bg-slate-800 hover:bg-slate-700 text-gray-200 py-2 px-3 rounded-xl text-left border border-slate-700">
+                        <span class="block font-bold text-brand-neon">Aluno (8°A)</span>
+                        <span class="text-[10px] text-gray-400 truncate block">aluno.8a@escola.pr.gov.br</span>
+                    </button>
+                    <button onclick="fillDemoUser('professor')" class="bg-slate-800 hover:bg-slate-700 text-gray-200 py-2 px-3 rounded-xl text-left border border-slate-700">
+                        <span class="block font-bold text-amber-400">Professor (Admin)</span>
+                        <span class="text-[10px] text-gray-400 truncate block">prof.silva@escola.pr.gov.br</span>
+                    </button>
+                </div>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 uppercase mb-1">E-mail Institucional</label>
+                    <input type="email" id="loginEmail" required placeholder="seu.nome@escola.pr.gov.br" 
+                           class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Perfil</label>
+                        <select id="loginRole" onchange="toggleLoginClassSelect()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                            <option value="aluno">Aluno</option>
+                            <option value="professor">Professor</option>
+                        </select>
+                    </div>
+                    <div id="loginClassWrapper">
+                        <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Sua Turma</label>
+                        <select id="loginClass" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                            <!-- Classes injected -->
+                        </select>
+                    </div>
+                </div>
+
+                <div id="loginError" class="hidden text-xs text-red-400 bg-red-950/50 p-2.5 rounded-xl border border-red-800/50"></div>
+
+                <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg neon-glow-orange mt-2">
+                    Confirmar e Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD NEW PROJECT (ALUNO) -->
+    <div id="newProjectModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-card w-full max-w-2xl rounded-3xl p-6 sm:p-8 relative border border-slate-700 shadow-2xl my-8">
+            <button onclick="closeNewProjectModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-brand-500/20 text-brand-500 rounded-2xl border border-brand-500/30 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-pen-ruler"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-extrabold text-white uppercase">Novo Projeto de Tênis</h3>
+                    <p class="text-xs text-gray-400">Cadastre a ideia de produto desenvolvida na aula</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleSaveProject(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Nome do Modelo *</label>
+                        <input type="text" id="projTitle" required placeholder="Ex: Air Izabel Runner Pro" 
+                               class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Turma do Projeto *</label>
+                        <select id="projClass" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                            <!-- Classes options -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Nome do Aluno / Integrantes *</label>
+                        <input type="text" id="projAuthor" required placeholder="Ex: Lucas Silva e Mateus Costa" 
+                               class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Preço Sugerido de Lançamento</label>
+                        <input type="text" id="projPrice" placeholder="Ex: R$ 349,90" 
+                               class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Escolher Protótipo Visual *</label>
+                    <div class="grid grid-cols-4 gap-2 mb-2" id="presetImagesContainer">
+                        <!-- Image presets injected via JS -->
+                    </div>
+                    <p class="text-[11px] text-gray-400 mb-1">Ou cole o link de uma imagem externa:</p>
+                    <input type="url" id="projCustomImg" placeholder="https://exemplo.com/imagem-do-tenis.jpg" 
+                           class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Descrição do Conceito / Materiais / Tecnologia *</label>
+                    <textarea id="projDesc" rows="3" required placeholder="Explique os diferenciais do tênis: materiais reciclados, amortecimento air, customização streetwear, etc..." 
+                              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Tags (separadas por vírgula)</label>
+                    <input type="text" id="projTags" placeholder="Sustentável, Impressão 3D, Basquete, Futuro" 
+                           class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeNewProjectModal()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-gray-300 text-sm font-bold">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold shadow-lg neon-glow-orange">
+                        Publicar Projeto na Vitrine
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: PROJECT DETAILS & TEACHER REVIEW -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-card w-full max-w-3xl rounded-3xl p-6 sm:p-8 relative border border-slate-700 shadow-2xl my-8">
+            <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="detailContent">
+                <!-- Content generated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONSTANTS AND STATE ---
+        const TURMAS = ["8°A", "8°B", "8°C", "9°A", "9°B", "9°C", "9°D", "1°A", "1°B", "1°C", "2°A", "2°B", "2°C"];
+        
+        const SNEAKER_PRESETS = [
+            "https://
